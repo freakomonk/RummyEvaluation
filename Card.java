@@ -25,7 +25,7 @@ public class Card implements Comparable<Card> {
 	public static ArrayList<Card> getSortedCardsBySuit(ArrayList<Card> cards) {
 		ArrayList<Card> sortedCards = getSortedCardsByValue(cards);
 		sortedCards.sort((Card card1, Card card2 ) -> card1.getSuit().ordinal() - card2.getSuit().ordinal());
-		return sortedCards;
+	  	return sortedCards;
 	}
 	
 	public static boolean areInSequence(ArrayList<Card> cards) {

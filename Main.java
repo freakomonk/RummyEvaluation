@@ -24,7 +24,7 @@ public class Main {
 	 		hands.add(hand);
 		}
 		for(Hand hand: hands) {
-//			System.out.println(hand.getListOfCards().size());
+
 			for(Card card : hand.getListOfCards()) {
 				System.out.print(card.getValue() +  " ");
 			}
