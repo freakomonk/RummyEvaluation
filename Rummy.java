@@ -2,7 +2,7 @@ package card;
 
 import java.util.ArrayList;
 
-public class Rummy extends Game {
+public class Rummy {
 
 	private static int numberOfDecks;
 	private static int numberOfPlayers;
@@ -39,23 +39,32 @@ public class Rummy extends Game {
 	
 	public ArrayList<Hand> getHands() {
 		return this.hands;
-	}
-	
-	public ArrayList<Integer> getScores() {
-		ArrayList<Integer> scores =  new ArrayList<>();
-		for(Hand hand: this.hands) {
-			scores.add(calculate(hand));
-		}
-		return scores;
-	}
 
 
-	public Integer calculate(Hand hand) {
+	private ArrayList<Card> cards;
+
+	public Rummy(int numberOfDecks, int numberOfPlayers, int numberOfCardsInHand) {
+		this.numberOfDecks = numberOfDecks;
+		this.numberOfPlayers = numberOfPlayers;
+		this.numberOfCardsInHand = numberOfCardsInHand;
+		this.cards = new ArrayList<>();
+
+	}
+
+	public void addHand(Card hand) {
+		this.cards.add(hand);
+	}
+
+	public ArrayList<Card> getHands() {
+		return this.cards;
+	}
+
+	public Integer calculate(ArrayList<Card> cards) {
 		int score = 0;
-		boolean hasJoker = hand.hasJoker();
-		ArrayList<Card> sequenceCards = getSequence(hand, hasJoker);
-		if(sequenceCards != null) {
-			for(Card card: sequenceCards) {
+		boolean hasJoker = false;
+		ArrayList<Card> sequenceCards = getSequence(cards, hasJoker);
+		if (sequenceCards != null) {
+			for (Card card : sequenceCards) {
 				System.out.print(card.getValue() + " ");
 				score+=card.getValue();
 			}
@@ -65,26 +74,37 @@ public class Rummy extends Game {
 		}
 		return score;
 	}
-	
-	private boolean isConsecutive(int prevVal, Suit prevSuit, Card card ) {
-		return (prevSuit == null) || (prevVal == -1) || (prevSuit.equals(card.getSuit()) && Math.abs(prevVal - card.getValue()) == 1 );	
+
+	private boolean isConsecutive(int prevVal, Suit prevSuit, Card card) {
+		return (prevSuit == null) || (prevVal == -1)
+				|| (prevSuit.equals(card.getSuit()) && Math.abs(prevVal - card.getValue()) == 1);
 	}
-	
-	public ArrayList<Card> getSequence(Hand hand, boolean hasJoker) {
-		ArrayList<Card> sortedCards = hand.getSortedCards();
+
+	public ArrayList<Card> getSequence(ArrayList<Card> cards, boolean hasJoker) {
+		ArrayList<Card> sortedCards = Card.getSortedCardsByValue(cards);
 		int req_size = SEQ_LEN;
 		int count = 0;
 		int prevVal = -1;
 		Suit prevSuit = null;
 		ArrayList<Card> selectedCards = new ArrayList<>();
-		for(Card card: sortedCards) {
-//			System.out.println(card.getValue() + " " + card.getSuit().name());
-//			System.out.println(count);
-			if(isConsecutive(prevVal, prevSuit, card) || hasJoker) {
+		for (Card card : sortedCards) {
+			// System.out.println(card.getValue() + " " +
+			// card.getSuit().name());
+			// System.out.println(count);
+			if (isConsecutive(prevVal, prevSuit, card) || hasJoker) {
 				count++;
+
 				if(hasJoker) hasJoker = false;
 				else selectedCards.add(card);
 				if(count == req_size || count== req_size+1 || count==req_size+2) return selectedCards;
+=======
+				if (hasJoker)
+					hasJoker = false;
+				else
+					selectedCards.add(card);
+				if (count == req_size)
+					return selectedCards;
+
 			} else {
 				selectedCards.clear();
 				count = 0;
@@ -93,5 +113,15 @@ public class Rummy extends Game {
 			prevSuit = card.getSuit();
 		}
 		return null;
+	}
+
+	public boolean isSequence(ArrayList<Card> cards, int start, int end) {
+		ArrayList<Card> subCards = (ArrayList<Card>) cards.subList(start, end);
+		return Card.areInSequence(subCards) && Card.isSameSuit(subCards);
+	}
+
+	public boolean isSet(ArrayList<Card> cards, int start, int end) {
+		ArrayList<Card> subCards = (ArrayList<Card>) cards.subList(start, end);
+		return Card.isSameSuit(subCards);
 	}
 }

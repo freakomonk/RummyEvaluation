@@ -15,65 +15,59 @@ public class Card implements Comparable<Card> {
 		this.suit = suit;
 	}
 
+	public static ArrayList<Card> getSortedCardsByValue(ArrayList<Card> cards) {
+		ArrayList<Card> sortedCards = cards;
+		sortedCards.sort((Card card1, Card card2 ) -> card1.getValue() - card2.getValue());
+		return sortedCards;
+	}
+	
+	public static ArrayList<Card> getSortedCardsBySuit(ArrayList<Card> cards) {
+		ArrayList<Card> sortedCards = getSortedCardsByValue(cards);
+		sortedCards.sort((Card card1, Card card2 ) -> card1.getSuit().ordinal() - card2.getSuit().ordinal());
+		return sortedCards;
+	}
+	
 	public static boolean areInSequence(ArrayList<Card> cards) {
 		Collections.sort(cards);
-		int flag = 0;
 		int x = cards.get(0).value;
-
 		for (int i = 1; i < cards.size(); i++) {
 			if (Math.abs((cards.get(i).value - x)) != 1)
-				flag = 1;
+				return false;
 			x = cards.get(i).value;
 		}
-
-		if (flag == 1)
-			return false;
-
 		return true;
 	}
 
 	public static boolean isSameSuit(ArrayList<Card> cards) {
-		int flag = 0;
 		Card x = cards.get(0);
-
 		for (int i = 1; i < cards.size(); i++) {
-
 			if (x.getSuit() != cards.get(i).getSuit()) {
-				flag = 1;
+				return false;
 			}
 		}
-
-		if (flag == 1)
-			return false;
-
 		return true;
 	}
 
 	public static HashMap<Integer, Integer> getFreqOfCards(ArrayList<Card> cards) {
 
 		HashMap<Integer, Integer> cardFreq = new HashMap<Integer, Integer>();
-
 		for (Card c : cards) {
-
 			if (cardFreq.containsKey(c.value)) 
 				cardFreq.put(c.value, cardFreq.get(c.value) + 1);
 			else 
 				cardFreq.put(c.value, 1);
 		}
-
 		return cardFreq;
 	}
 
 	public static HashMap<Suit, Integer> getFreqOfSuits(ArrayList<Card> cards) {
 		HashMap<Suit, Integer> suitFreq = new HashMap<Suit,Integer>();
-
 		for (Card c : cards) {
 			if (suitFreq.containsKey(c.getSuit()))
 				suitFreq.put(c.getSuit(), suitFreq.get(c.getSuit()) + 1);
 			else
 				suitFreq.put(c.getSuit(), 1);
 		}
-
 		return suitFreq;
 	}
 
