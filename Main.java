@@ -12,9 +12,10 @@ public class Main {
 	public static void main(String[] args) {
 		ArrayList<Card> cards = new ArrayList<>();
 		int noOfCards = MAX_LIMIT - MIN_LIMIT - 1;
+		boolean isJoker = false;
  		for(int value=MIN_LIMIT; value<=MAX_LIMIT; value++) {
 			for(Suit suit : Suit.values()) {
-				Card card = new Card(value, suit);
+				Card card = new Card(value, suit, isJoker);
 				cards.add(card);
 			}
 		}

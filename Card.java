@@ -11,9 +11,10 @@ public class Card implements Comparable<Card> {
 	private int value;
 	private boolean isJoker;
 
-	public Card(int value, Suit suit) {
+	public Card(int value, Suit suit, boolean isJoker) {
 		this.value = value;
 		this.suit = suit;
+		this.isJoker = isJoker;
 	}
 
 	public static ArrayList<Card> getSortedCardsByValue(ArrayList<Card> cards) {
@@ -124,15 +125,4 @@ public class Card implements Comparable<Card> {
 		return (int) cards.stream().filter(p -> p.getValue() == value).collect(Collectors.groupingBy(p -> p.getSuit())).size();
 	}
 
-	public static void main(String[] args) {
-		Card a = new Card(1, Suit.HEART);
-		Card d = new Card(3, Suit.DIAMOND);
-		Card b = new Card(2, Suit.DIAMOND);
-
-		ArrayList<Card> c = new ArrayList<Card>();
-		c.add(a);
-		c.add(b);
-		c.add(d);
-		System.out.println(Card.areInSequence(c));
-	}
 }

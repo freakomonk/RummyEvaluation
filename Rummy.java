@@ -18,7 +18,6 @@ public class Rummy {
 	private int jokerCard;
 
 	public Rummy(int numberOfDecks, int numberOfPlayers, ArrayList<Card> cards, int jokerCard) {
-		this.numberOfDecks = numberOfDecks;
 		this.numberOfPlayers = numberOfPlayers;
 		this.jokerCard = jokerCard;
 		this.numberOfCardsInHand = cards.size();
