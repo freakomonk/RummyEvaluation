@@ -7,7 +7,7 @@ public class Rummy {
 	private static int numberOfDecks;
 	private static int numberOfPlayers;
 	private static int numberOfCardsInHand;
-	private static int secretJoker=0;
+	
 	private static int ONE = 1;
 	private static int TWO = 2;
 	private static int THREE = 3;
@@ -25,11 +25,11 @@ public class Rummy {
 	
 	private ArrayList<Hand> hands;
 	
-	public Rummy(int numberOfDecks, int numberOfPlayers, int numberOfCardsInHand, int secretJoker){
+	public Rummy(int numberOfDecks, int numberOfPlayers, int numberOfCardsInHand){
 		this.numberOfDecks=numberOfDecks;
 		this.numberOfPlayers=numberOfPlayers;
 		this.numberOfCardsInHand=numberOfCardsInHand;
-		this.secretJoker=secretJoker;
+		
 		this.hands = new ArrayList<>();
 	}
 	
@@ -60,9 +60,15 @@ public class Rummy {
 
 	public Integer calculate(ArrayList<Card> cards) {
 		int score = 0;
-		if(secretJoker==0)
-		boolean hasJoker = false;
-		else boolean hasJoker=true;
+		for(Card card: cards){
+			if(card.isJoker())
+			{
+				boolean hasJoker=true;
+				break;
+			}
+			else boolean hasJoker=false;
+		}
+	}
 		
 		ArrayList<Card> sequenceCards = getSequence(cards, hasJoker);
 		if (sequenceCards != null) {
@@ -88,7 +94,7 @@ public class Rummy {
 		Suit prevSuit = null;
 		ArrayList<Card> selectedCards = new ArrayList<>();
 		for(Card card: sortedCards){
-			if(card.getValue()==secretJoker) countOfJokersInHand++;
+			if(card.getValue()==secretJoker|| card.getVa) countOfJokersInHand++;
 		}
 		for (Card card : sortedCards) {
 			// System.out.println(card.getValue() + " " +
@@ -100,7 +106,7 @@ public class Rummy {
 
 				if(!isConsecutive(prevVal, prevSuit, card) && hasJoker && countOfJokersInHand==0) hasJoker = false;
 				else selectedCards.add(card);
-				if(count == req_size || count== req_size+1 || count==req_size+2) return selectedCards;
+				
                 if(req_size - count <= countOfJokersInHand || req_size+1 - count <= countOfJokersInHand || req_size+2 - count <= countOfJokersInHand)
                 {
                 	if(req_size+2 - count <= countOfJokersInHand) countOfJokersInHand = req_size+2 - count;
@@ -109,11 +115,11 @@ public class Rummy {
                 	
                 	}
                 }
-				if (countOfJokersInHand ==0 && hasJoker)
+				if (countOfJokersInHand==0 && hasJoker)
 					hasJoker = false;
 				else
 					selectedCards.add(card);
-				if (count == req_size)
+				if (count == req_size || count== req_size+1 || count==req_size+2)
 					return selectedCards;
 
 			} else {

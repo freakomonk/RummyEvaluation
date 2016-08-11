@@ -10,9 +10,10 @@ public class Card implements Comparable<Card> {
 	private int value;
 	private boolean isJoker;
 
-	public Card(int value, Suit suit) {
+	public Card(int value, Suit suit, boolean isJoker) {
 		this.value = value;
 		this.suit = suit;
+		this.isJoker=isJoker;
 	}
 
 	public static ArrayList<Card> getSortedCardsByValue(ArrayList<Card> cards) {
