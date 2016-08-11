@@ -12,11 +12,12 @@ public class Main {
 	public static void main(String[] args) {
 		int noOfCards = MAX_LIMIT - MIN_LIMIT + 1;
 		ArrayList<Hand> hands = new ArrayList<>();
+		boolean isJoker=false;
 		for(int player=1; player<=NO_OF_PLAYERS; player++) {
 			Hand hand = new Hand(noOfCards);
 	 		for(int value=MIN_LIMIT; value<MAX_LIMIT; value++) {
 				for(Suit suit : Suit.values()) {
-					Card card = new Card(value, suit);
+					Card card = new Card(value, suit, isJoker);
 					hand.addCard(card);
 				}
 			}
