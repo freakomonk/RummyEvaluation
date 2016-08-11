@@ -95,11 +95,18 @@ public class Rummy {
 			if (isConsecutive(prevVal, prevSuit, card) || hasJoker) {
 				count++;
 
-				if(hasJoker) hasJoker = false;
+				if(!isConsecutive(prevVal, prevSuit, card) && hasJoker && countOfJokersInHand==0) hasJoker = false;
 				else selectedCards.add(card);
 				if(count == req_size || count== req_size+1 || count==req_size+2) return selectedCards;
-=======
-				if (hasJoker)
+                if(req_size - count <= countOfJokersInHand || req_size+1 - count <= countOfJokersInHand || req_size+2 - count <= countOfJokersInHand)
+                {
+                	if(req_size+2 - count <= countOfJokersInHand) countOfJokersInHand = req_size+2 - count;
+                	if(req_size+1 - count <= countOfJokersInHand) countOfJokersInHand = req_size+1 - count;
+                	if(req_size - count <= countOfJokersInHand) countOfJokersInHand = req_size - count;
+                	
+                	}
+                }
+				if (countOfJokersInHand ==0 && hasJoker)
 					hasJoker = false;
 				else
 					selectedCards.add(card);
