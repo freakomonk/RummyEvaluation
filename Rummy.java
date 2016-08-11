@@ -7,7 +7,7 @@ public class Rummy {
 	private static int numberOfDecks;
 	private static int numberOfPlayers;
 	private static int numberOfCardsInHand;
-	private static int secretJoker;
+	private static int secretJoker=0;
 	private static int ONE = 1;
 	private static int TWO = 2;
 	private static int THREE = 3;
@@ -48,7 +48,6 @@ public class Rummy {
 		this.numberOfPlayers = numberOfPlayers;
 		this.numberOfCardsInHand = numberOfCardsInHand;
 		this.cards = new ArrayList<>();
-
 	}
 
 	public void addHand(Card hand) {
@@ -61,7 +60,10 @@ public class Rummy {
 
 	public Integer calculate(ArrayList<Card> cards) {
 		int score = 0;
+		if(secretJoker==0)
 		boolean hasJoker = false;
+		else boolean hasJoker=true;
+		
 		ArrayList<Card> sequenceCards = getSequence(cards, hasJoker);
 		if (sequenceCards != null) {
 			for (Card card : sequenceCards) {
@@ -75,14 +77,12 @@ public class Rummy {
 		return score;
 	}
 
-	private boolean isConsecutive(int prevVal, Suit prevSuit, Card card) {
-		return (prevSuit == null) || (prevVal == -1)
-				|| (prevSuit.equals(card.getSuit()) && Math.abs(prevVal - card.getValue()) == 1);
-	}
-
+	
 	public ArrayList<Card> getSequence(ArrayList<Card> cards, boolean hasJoker) {
 		ArrayList<Card> sortedCards = Card.getSortedCardsByValue(cards);
+		sortedCards=Card.getSortedCardsBySuit(sortedCards);
 		int req_size = SEQ_LEN;
+		int countOfJokersInHand=0;
 		int count = 0;
 		int prevVal = -1;
 		Suit prevSuit = null;
@@ -91,6 +91,7 @@ public class Rummy {
 			// System.out.println(card.getValue() + " " +
 			// card.getSuit().name());
 			// System.out.println(count);
+			if(card.getValue==secretJoker) countOfJokersInHand++;
 			if (isConsecutive(prevVal, prevSuit, card) || hasJoker) {
 				count++;
 
@@ -114,6 +115,12 @@ public class Rummy {
 		}
 		return null;
 	}
+	
+	private boolean isConsecutive(int prevVal, Suit prevSuit, Card card) {
+		return (prevSuit == null) || (prevVal == -1)
+				|| (prevSuit.equals(card.getSuit()) && Math.abs(prevVal - card.getValue()) == 1);
+	}
+
 
 	public boolean isSequence(ArrayList<Card> cards, int start, int end) {
 		ArrayList<Card> subCards = (ArrayList<Card>) cards.subList(start, end);
