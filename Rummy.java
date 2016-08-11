@@ -7,6 +7,7 @@ public class Rummy {
 	private static int numberOfDecks;
 	private static int numberOfPlayers;
 	private static int numberOfCardsInHand;
+	private static int secretJoker;
 	private static int ONE = 1;
 	private static int TWO = 2;
 	private static int THREE = 3;
@@ -21,6 +22,24 @@ public class Rummy {
 	private static int QUEEN = 12;
 	private static int KING = 13;
 	private static int SEQ_LEN = 3;
+	
+	private ArrayList<Hand> hands;
+	
+	public Rummy(int numberOfDecks, int numberOfPlayers, int numberOfCardsInHand, int secretJoker){
+		this.numberOfDecks=numberOfDecks;
+		this.numberOfPlayers=numberOfPlayers;
+		this.numberOfCardsInHand=numberOfCardsInHand;
+		this.secretJoker=secretJoker;
+		this.hands = new ArrayList<>();
+	}
+	
+	public void addHand(Hand hand) {
+		this.hands.add(hand);
+	}
+	
+	public ArrayList<Hand> getHands() {
+		return this.hands;
+
 
 	private ArrayList<Card> cards;
 
@@ -29,6 +48,7 @@ public class Rummy {
 		this.numberOfPlayers = numberOfPlayers;
 		this.numberOfCardsInHand = numberOfCardsInHand;
 		this.cards = new ArrayList<>();
+
 	}
 
 	public void addHand(Card hand) {
@@ -46,6 +66,7 @@ public class Rummy {
 		if (sequenceCards != null) {
 			for (Card card : sequenceCards) {
 				System.out.print(card.getValue() + " ");
+				score+=card.getValue();
 			}
 			System.out.println();
 		} else {
@@ -72,12 +93,18 @@ public class Rummy {
 			// System.out.println(count);
 			if (isConsecutive(prevVal, prevSuit, card) || hasJoker) {
 				count++;
+
+				if(hasJoker) hasJoker = false;
+				else selectedCards.add(card);
+				if(count == req_size || count== req_size+1 || count==req_size+2) return selectedCards;
+=======
 				if (hasJoker)
 					hasJoker = false;
 				else
 					selectedCards.add(card);
 				if (count == req_size)
 					return selectedCards;
+
 			} else {
 				selectedCards.clear();
 				count = 0;
