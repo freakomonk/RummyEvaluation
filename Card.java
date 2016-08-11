@@ -3,6 +3,7 @@ package card;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class Card implements Comparable<Card> {
 
@@ -17,13 +18,13 @@ public class Card implements Comparable<Card> {
 
 	public static ArrayList<Card> getSortedCardsByValue(ArrayList<Card> cards) {
 		ArrayList<Card> sortedCards = cards;
-		sortedCards.sort((Card card1, Card card2 ) -> card1.getValue() - card2.getValue());
+		sortedCards.sort((Card card1, Card card2 ) -> card2.getValue() - card1.getValue());
 		return sortedCards;
 	}
 	
 	public static ArrayList<Card> getSortedCardsBySuit(ArrayList<Card> cards) {
 		ArrayList<Card> sortedCards = getSortedCardsByValue(cards);
-		sortedCards.sort((Card card1, Card card2 ) -> card1.getSuit().ordinal() - card2.getSuit().ordinal());
+		sortedCards.sort((Card card1, Card card2 ) -> card2.getSuit().ordinal() - card1.getSuit().ordinal());
 		return sortedCards;
 	}
 	
@@ -49,7 +50,6 @@ public class Card implements Comparable<Card> {
 	}
 
 	public static HashMap<Integer, Integer> getFreqOfCards(ArrayList<Card> cards) {
-
 		HashMap<Integer, Integer> cardFreq = new HashMap<Integer, Integer>();
 		for (Card c : cards) {
 			if (cardFreq.containsKey(c.value)) 
@@ -98,6 +98,30 @@ public class Card implements Comparable<Card> {
 
 	public void setJoker(boolean isJoker) {
 		this.isJoker = isJoker;
+	}
+	
+	public String toString() {
+		String s = String.valueOf(this.value) + " " + this.suit.toString();
+		return s;
+	}
+	public static int getSuitCount(ArrayList<Card> cards, Card card) {
+		Suit suit = card.getSuit();
+		return (int) cards.stream().filter(p -> p.getSuit().equals(suit)).count();
+	}
+	
+	public static int getRankCount(ArrayList<Card> cards, Card card) {
+		int value = card.getValue();
+		return (int) cards.stream().filter(p -> p.getValue() == value).count();
+	}
+	
+	public static int getSuitDistinctCount(ArrayList<Card> cards, Card card) {
+		Suit suit = card.getSuit();
+		return (int) cards.stream().filter(p -> p.getSuit().equals(suit)).collect(Collectors.groupingBy(p -> p.getValue())).size();
+	}
+	
+	public static int getRankDistinctCount(ArrayList<Card> cards, Card card) {
+		int value = card.getValue();
+		return (int) cards.stream().filter(p -> p.getValue() == value).collect(Collectors.groupingBy(p -> p.getSuit())).size();
 	}
 
 	public static void main(String[] args) {
