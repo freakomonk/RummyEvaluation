@@ -87,11 +87,14 @@ public class Rummy {
 		int prevVal = -1;
 		Suit prevSuit = null;
 		ArrayList<Card> selectedCards = new ArrayList<>();
+		for(Card card: sortedCards){
+			if(card.getValue()==secretJoker) countOfJokersInHand++;
+		}
 		for (Card card : sortedCards) {
 			// System.out.println(card.getValue() + " " +
 			// card.getSuit().name());
 			// System.out.println(count);
-			if(card.getValue==secretJoker) countOfJokersInHand++;
+			
 			if (isConsecutive(prevVal, prevSuit, card) || hasJoker) {
 				count++;
 
