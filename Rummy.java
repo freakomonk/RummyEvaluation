@@ -1,147 +1,86 @@
 package card;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Rummy {
 
 	private static int numberOfDecks;
 	private static int numberOfPlayers;
 	private static int numberOfCardsInHand;
-	
-	private static int ONE = 1;
-	private static int TWO = 2;
+	private static int ACE = 13;
 	private static int THREE = 3;
 	private static int FOUR = 4;
 	private static int FIVE = 5;
-	private static int SIX = 6;
-	private static int SEVEN = 7;
-	private static int EIGHT = 8;
-	private static int NINE = 9;
-	private static int TEN = 10;
-	private static int JACK = 11;
-	private static int QUEEN = 12;
-	private static int KING = 13;
-	private static int SEQ_LEN = 3;
+	private static Integer[] seqLengths = {THREE, FOUR, FIVE};
 	
-	private ArrayList<Hand> hands;
-	
-	public Rummy(int numberOfDecks, int numberOfPlayers, int numberOfCardsInHand){
-		this.numberOfDecks=numberOfDecks;
-		this.numberOfPlayers=numberOfPlayers;
-		this.numberOfCardsInHand=numberOfCardsInHand;
-		
-		this.hands = new ArrayList<>();
-	}
-	
-	public void addHand(Hand hand) {
-		this.hands.add(hand);
-	}
-	
-	public ArrayList<Hand> getHands() {
-		return this.hands;
-
-
 	private ArrayList<Card> cards;
+	private int jokerCard;
 
-	public Rummy(int numberOfDecks, int numberOfPlayers, int numberOfCardsInHand) {
-		this.numberOfDecks = numberOfDecks;
+	public Rummy(int numberOfDecks, int numberOfPlayers, ArrayList<Card> cards, int jokerCard) {
 		this.numberOfPlayers = numberOfPlayers;
-		this.numberOfCardsInHand = numberOfCardsInHand;
-		this.cards = new ArrayList<>();
+		this.jokerCard = jokerCard;
+		this.numberOfCardsInHand = cards.size();
+		this.cards = cards;
 	}
 
-	public void addHand(Card hand) {
-		this.cards.add(hand);
-	}
-
-	public ArrayList<Card> getHands() {
+	public ArrayList<Card> getCards() {
 		return this.cards;
 	}
-
-	public Integer calculate(ArrayList<Card> cards) {
-		int score = 0;
-		for(Card card: cards){
-			if(card.isJoker())
-			{
-				boolean hasJoker=true;
-				break;
-			}
-			else boolean hasJoker=false;
-		}
-	}
-		
-		ArrayList<Card> sequenceCards = getSequence(cards, hasJoker);
-		if (sequenceCards != null) {
-			for (Card card : sequenceCards) {
-				System.out.print(card.getValue() + " ");
-				score+=card.getValue();
-			}
-			System.out.println();
-		} else {
-			System.out.println("No sequence available");
-		}
-		return score;
-	}
-
 	
-	public ArrayList<Card> getSequence(ArrayList<Card> cards, boolean hasJoker) {
-		ArrayList<Card> sortedCards = Card.getSortedCardsByValue(cards);
-		sortedCards=Card.getSortedCardsBySuit(sortedCards);
-		int req_size = SEQ_LEN;
-		int countOfJokersInHand=0;
+	public void evaluate() {
+		int numJokers = (int)this.cards.stream().filter(p -> p.getValue() == jokerCard || p.isJoker()).count();
+		System.out.println("Jokers " + jokerCard + " "  + numJokers);
+		ArrayList<Card> finalCards = getNonJokerCards();
+		ArrayList<Card> sortedCards = Card.getSortedCardsBySuit(finalCards);
+		calculateSequences(sortedCards, numJokers);
+	}
+	
+	private void calculateSequences(ArrayList<Card> cards, int numJokers) {
+		for(int len : seqLengths) {
+			System.out.println("seq length : " + len);
+			for(Suit suit: Suit.values()) {
+				System.out.println(suit);
+				System.out.println(getNoOfSequences(cards, suit, len, numJokers));
+			}
+		}
+	}
+	
+	private ArrayList<Card> getNonJokerCards() {
+		return (ArrayList<Card>) this.cards.stream().filter(p -> p.getValue() != jokerCard && !p.isJoker()).collect(Collectors.toList());
+	}
+	
+	private int getNoOfSequences(ArrayList<Card> sortedCards, Suit suit, int len, int numJokers) {
+		ArrayList<Card> suitCards = (ArrayList<Card>) sortedCards.stream().filter(p -> p.getSuit().equals(suit)).collect(Collectors.toList());
 		int count = 0;
-		int prevVal = -1;
-		Suit prevSuit = null;
-		ArrayList<Card> selectedCards = new ArrayList<>();
-		for(Card card: sortedCards){
-			if(card.isJoker()) countOfJokersInHand++;
-		}
-		for (Card card : sortedCards) {
-						
-			if (isConsecutive(prevVal, prevSuit, card) || hasJoker) {
-				count++;
-
-				if(!isConsecutive(prevVal, prevSuit, card) && hasJoker && countOfJokersInHand==0) hasJoker = false;
-				else selectedCards.add(card);
-				
-                if(req_size - count <= countOfJokersInHand || req_size+1 - count <= countOfJokersInHand || req_size+2 - count <= countOfJokersInHand)
-                {
-                	if(req_size+2 - count <= countOfJokersInHand) countOfJokersInHand = req_size+2 - count;
-                	if(req_size+1 - count <= countOfJokersInHand) countOfJokersInHand = req_size+1 - count;
-                	if(req_size - count <= countOfJokersInHand) countOfJokersInHand = req_size - count;
-                	
-                	}
-                }
-				if (countOfJokersInHand==0 && hasJoker)
-					hasJoker = false;
-				else
-					selectedCards.add(card);
-				if (count == req_size || count== req_size+1 || count==req_size+2)
-					return selectedCards;
-
-			} else {
-				selectedCards.clear();
-				count = 0;
+		if(suitCards.size() >= len) {
+			int start = 0;
+			while(start + len - 1 < suitCards.size()) {
+				int gap = getGap(suitCards, start, len - 1);
+				System.out.println(suitCards.subList(start, start+len).toString() + " " + gap);
+				if(gap == 0 || gap <=  numJokers) count++;
+				start++;
 			}
-			prevVal = card.getValue();
-			prevSuit = card.getSuit();
 		}
-		return null;
+		return count;
+	}
+
+	public int getGap(ArrayList<Card> cards, int start, int size) {
+		int i = start, count = 0;
+		while(i < start+size) {
+			int diff = cards.get(i).getValue() - cards.get(i+1).getValue() - 1;
+			if(diff == 0) count ++;
+			i++;
+		}
+		return size - count;
 	}
 	
-	private boolean isConsecutive(int prevVal, Suit prevSuit, Card card) {
-		return (prevSuit == null) || (prevVal == -1)
-				|| (prevSuit.equals(card.getSuit()) && Math.abs(prevVal - card.getValue()) == 1);
+	
+	public int getSuitDistinctCount(Suit suit) {
+		return (int) cards.stream().filter(p -> p.getSuit().equals(suit)).collect(Collectors.groupingBy(p -> p.getValue())).size();
 	}
-
-
-	public boolean isSequence(ArrayList<Card> cards, int start, int end) {
-		ArrayList<Card> subCards = (ArrayList<Card>) cards.subList(start, end);
-		return Card.areInSequence(subCards) && Card.isSameSuit(subCards);
-	}
-
-	public boolean isSet(ArrayList<Card> cards, int start, int end) {
-		ArrayList<Card> subCards = (ArrayList<Card>) cards.subList(start, end);
-		return Card.isSameSuit(subCards);
+	
+	public int getRankDistinctCount(int value) {
+		return (int) cards.stream().filter(p -> p.getValue() == value).collect(Collectors.groupingBy(p -> p.getSuit())).size();
 	}
 }
